@@ -5,14 +5,14 @@ FROM node:20-alpine AS builder
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json from frontend directory
-COPY frontend/package*.json ./
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy frontend source code
-COPY frontend/ .
+# Copy source code
+COPY . .
 
 # Build React application
 RUN npm run build
@@ -20,8 +20,8 @@ RUN npm run build
 # Stage 2: Production stage
 FROM node:20-alpine AS production
 
-# Install serve globally
-RUN npm install -g serve
+# Install serve globally with retry
+RUN npm install -g serve --retry 3
 
 # Create a non-root user
 RUN addgroup -g 1001 -S nodejs
