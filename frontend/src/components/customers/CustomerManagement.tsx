@@ -1057,7 +1057,7 @@ const CustomerManagement: React.FC = () => {
 
               {activeStep === 0 && (
                 <Grid container spacing={2}>
-                  <Grid size={12}>
+                  <Grid xs={12}>
                     <Box sx={{ display: 'flex', gap: 1, flexDirection: { xs: 'column', sm: 'row' } }}>
                       <TextField
                         label="OR Number"
@@ -1080,7 +1080,7 @@ const CustomerManagement: React.FC = () => {
                       </Button>
                     </Box>
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6, lg: 6 }}>
+                  <Grid xs={12} sm={6} lg={6}>
                     <TextField
                       label="Full Name"
                       value={formData.name}
@@ -1089,7 +1089,7 @@ const CustomerManagement: React.FC = () => {
                       required
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6, lg: 6 }}>
+                  <Grid xs={12} sm={6} lg={6}>
                     <TextField
                       label="Contact Number"
                       value={formData.contact_number}
@@ -1098,7 +1098,7 @@ const CustomerManagement: React.FC = () => {
                       required
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6, lg: 6 }}>
+                  <Grid xs={12} sm={6} lg={6}>
                     <TextField
                       label="Email"
                       type="email"
@@ -1107,7 +1107,7 @@ const CustomerManagement: React.FC = () => {
                       fullWidth
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6, lg: 6 }}>
+                  <Grid xs={12} sm={6} lg={6}>
                     <TextField
                       label="Age"
                       value={formData.age}
@@ -1116,7 +1116,7 @@ const CustomerManagement: React.FC = () => {
                       type="number"
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6, lg: 6 }}>
+                  <Grid xs={12} sm={6} lg={6}>
                     <TextField
                       label="Address"
                       value={formData.address}
@@ -1124,7 +1124,7 @@ const CustomerManagement: React.FC = () => {
                       fullWidth
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6, lg: 6 }}>
+                  <Grid xs={12} sm={6} lg={6}>
                     <TextField
                       label="Occupation"
                       value={formData.occupation}
@@ -1132,7 +1132,7 @@ const CustomerManagement: React.FC = () => {
                       fullWidth
                     />
                   </Grid>
-                  <Grid size={12}>
+                  <Grid xs={12}>
                     <FormControl fullWidth required>
                       <InputLabel>Distribution Method</InputLabel>
                       <Select
@@ -1145,7 +1145,7 @@ const CustomerManagement: React.FC = () => {
                       </Select>
                     </FormControl>
                   </Grid>
-                  <Grid size={12}>
+                  <Grid xs={12}>
                     <TextField
                       label="Doctor Assigned"
                       value={formData.doctor_assigned}
@@ -1154,7 +1154,7 @@ const CustomerManagement: React.FC = () => {
                       helperText="Name of the doctor who assigned this prescription"
                     />
                   </Grid>
-                  <Grid size={12}>
+                  <Grid xs={12}>
                     <Typography variant="subtitle1" gutterBottom>
                       Priority Flags (Check all that apply)
                     </Typography>
@@ -1178,12 +1178,12 @@ const CustomerManagement: React.FC = () => {
 
               {activeStep === 1 && (
                 <Grid container spacing={2}>
-                  <Grid size={12}>
+                  <Grid xs={12}>
                     <Typography variant="h6" gutterBottom>
                       Prescription Details
                     </Typography>
                   </Grid>
-                  <Grid size={{ xs: 12, md: 4 }}>
+                  <Grid xs={12} md={4}>
                     <TextField
                       label="OD (Right Eye)"
                       value={formData.prescription.od}
@@ -1194,7 +1194,7 @@ const CustomerManagement: React.FC = () => {
                       helperText="Max 50 characters. Allowed: letters, numbers, +, -, ., /, (, )"
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 4 }}>
+                  <Grid xs={12} md={4}>
                     <TextField
                       label="OS (Left Eye)"
                       value={formData.prescription.os}
@@ -1205,7 +1205,7 @@ const CustomerManagement: React.FC = () => {
                       helperText="Max 50 characters. Allowed: letters, numbers, +, -, ., /, (, )"
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 4 }}>
+                  <Grid xs={12} md={4}>
                     <TextField
                       label="OU (Both Eyes)"
                       value={formData.prescription.ou}
@@ -1216,7 +1216,7 @@ const CustomerManagement: React.FC = () => {
                       helperText="Max 50 characters. Allowed: letters, numbers, +, -, ., /, (, )"
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid xs={12} md={6}>
                     <TextField
                       label="PD (Pupillary Distance)"
                       value={formData.prescription.pd}
@@ -1226,7 +1226,7 @@ const CustomerManagement: React.FC = () => {
                       error={!!formData.prescription.pd && !validatePrescriptionField(formData.prescription.pd)}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid xs={12} md={6}>
                     <TextField
                       label="ADD (Addition)"
                       value={formData.prescription.add}
@@ -1236,7 +1236,7 @@ const CustomerManagement: React.FC = () => {
                       error={!!formData.prescription.add && !validatePrescriptionField(formData.prescription.add)}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid xs={12} md={6}>
                     <FormControl fullWidth required>
                       <InputLabel>Grade Type</InputLabel>
                       <Select
@@ -1249,7 +1249,7 @@ const CustomerManagement: React.FC = () => {
                       </Select>
                     </FormControl>
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid xs={12} md={6}>
                     <FormControl fullWidth required>
                       <InputLabel>Lens Type</InputLabel>
                       <Select
@@ -1262,7 +1262,7 @@ const CustomerManagement: React.FC = () => {
                       </Select>
                     </FormControl>
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid xs={12} md={6}>
                     <TextField
                       label="Frame Code"
                       value={formData.frame_code}
@@ -1273,12 +1273,12 @@ const CustomerManagement: React.FC = () => {
                       helperText="Max 100 characters. Alphanumeric and special characters allowed"
                     />
                   </Grid>
-                  <Grid size={12}>
+                  <Grid xs={12}>
                     <Typography variant="subtitle2" gutterBottom>
                       Estimated Time *
                     </Typography>
                     <Grid container spacing={2}>
-                      <Grid size={{ xs: 12, md: 4 }}>
+                      <Grid xs={12} md={4}>
                         <TextField
                           label="Days"
                           value={formData.estimated_time.days}
@@ -1289,7 +1289,7 @@ const CustomerManagement: React.FC = () => {
                           helperText="Number of days"
                         />
                       </Grid>
-                      <Grid size={{ xs: 12, md: 4 }}>
+                      <Grid xs={12} md={4}>
                         <TextField
                           label="Hours"
                           value={formData.estimated_time.hours}
@@ -1300,7 +1300,7 @@ const CustomerManagement: React.FC = () => {
                           helperText="Number of hours (0-23)"
                         />
                       </Grid>
-                      <Grid size={{ xs: 12, md: 4 }}>
+                      <Grid xs={12} md={4}>
                         <TextField
                           label="Minutes"
                           value={formData.estimated_time.minutes}
@@ -1318,12 +1318,12 @@ const CustomerManagement: React.FC = () => {
 
               {activeStep === 2 && (
                 <Grid container spacing={2}>
-                  <Grid size={12}>
+                  <Grid xs={12}>
                     <Typography variant="h6" gutterBottom>
                       Payment & Final Details
                     </Typography>
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid xs={12} md={6}>
                     <FormControl fullWidth required>
                       <InputLabel>Payment Mode</InputLabel>
                       <Select
@@ -1336,7 +1336,7 @@ const CustomerManagement: React.FC = () => {
                       </Select>
                     </FormControl>
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid xs={12} md={6}>
                     <TextField
                       label="Payment Amount (₱)"
                       value={formData.payment_info.amount}
@@ -1346,7 +1346,7 @@ const CustomerManagement: React.FC = () => {
                       required
                     />
                   </Grid>
-                  <Grid size={12}>
+                  <Grid xs={12}>
                     <TextField
                       label="Remarks"
                       value={formData.remarks}
@@ -1947,7 +1947,7 @@ const CustomerManagement: React.FC = () => {
           {selectedCustomer && (
             <Box>
               <Grid container spacing={3}>
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid xs={12} md={6}>
                   <Typography variant="h6" sx={{ color: 'primary.main', mb: 2, fontWeight: 'bold' }}>
                     Basic Information
                   </Typography>
@@ -1994,7 +1994,7 @@ const CustomerManagement: React.FC = () => {
                     </Box>
                   </Box>
                 </Grid>
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid xs={12} md={6}>
                   <Typography variant="h6" sx={{ color: 'primary.main', mb: 2, fontWeight: 'bold' }}>
                     Prescription Details
                   </Typography>
@@ -2033,7 +2033,7 @@ const CustomerManagement: React.FC = () => {
                     </Box>
                   </Box>
                 </Grid>
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid xs={12} md={6}>
                   <Typography variant="h6" sx={{ color: 'primary.main', mb: 2, fontWeight: 'bold' }}>
                     Payment & Status
                   </Typography>
@@ -2064,7 +2064,7 @@ const CustomerManagement: React.FC = () => {
                     </Box>
                   </Box>
                 </Grid>
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid xs={12} md={6}>
                   <Typography variant="h6" sx={{ color: 'primary.main', mb: 2, fontWeight: 'bold' }}>
                     Additional Information
                   </Typography>

@@ -3,7 +3,7 @@ version: '3.8'
 services:
   # PostgreSQL Database
   postgres:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     container_name: escashop-postgres
     environment:
       POSTGRES_DB: escashop
@@ -37,7 +37,7 @@ services:
       - DB_NAME=escashop
       - DB_USER=postgres
       - DB_PASSWORD=postgres
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/escashop
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/escashop?sslmode=disable
       - JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
       - JWT_REFRESH_SECRET=your-super-secret-refresh-key-change-this-in-production
       - JWT_EXPIRES_IN=1h

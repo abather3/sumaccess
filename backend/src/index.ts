@@ -152,7 +152,7 @@ async function startServer() {
     console.log('Database connected successfully');
     
     // Initialize database tables
-    await initializeDatabase();
+    // await initializeDatabase(); // Skip - schema already initialized
     
     // Initialize Daily Queue Scheduler
     try {

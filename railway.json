@@ -14,7 +14,8 @@
         "restartPolicyType": "ON_FAILURE"
       },
       "variables": {
-        "NODE_ENV": "production"
+        "NODE_ENV": "production",
+        "NODE_VERSION": "20"
       }
     },
     "frontend": {
@@ -30,7 +31,8 @@
         "restartPolicyType": "ON_FAILURE"
       },
       "variables": {
-        "NODE_ENV": "production"
+        "NODE_ENV": "production",
+        "NODE_VERSION": "20"
       }
     }
   }

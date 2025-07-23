@@ -6,12 +6,30 @@ yarn-error.log*
 
 # Environment Variables
 .env
+.env.*
 .env.local
+.env.development
 .env.development.local
+.env.test
 .env.test.local
+.env.production
 .env.production.local
 backend/.env
+backend/.env.*
 frontend/.env
+frontend/.env.*
+
+# Railway Environment Files
+.env.railway
+backend/.env.railway
+frontend/.env.railway
+railway-env-template.txt
+
+# Sensitive Configuration Files
+*.env
+*.env.*
+config/production.json
+config/secrets.json
 
 # Build outputs
 dist/
@@ -172,3 +190,28 @@ start-local.sh
 # Custom scripts that might contain sensitive data
 setup-*.ps1
 test-*.js
+
+# Security and Secrets
+secrets/
+.secrets/
+*.secrets
+*.secret
+api-keys.txt
+passwords.txt
+credentials.json
+*.credentials
+
+# Railway specific
+railway.json
+.railway/
+
+# Cloud provider configs
+.aws/
+.gcp/
+.azure/
+
+# Monitoring and logs with sensitive data
+error.log
+access.log
+security.log
+audit.log

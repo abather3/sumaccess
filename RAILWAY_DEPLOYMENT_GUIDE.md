@@ -1,4 +1,6 @@
-# Railway Deployment Guide - EscaShop
+# Railway Deployment Guide for EscaShop - Updated
+
+This guide provides comprehensive step-by-step instructions for deploying the EscaShop application to Railway with secure environment configuration.
 
 ## Overview
 This guide covers deploying the entire EscaShop application (backend + frontend + database) to Railway.

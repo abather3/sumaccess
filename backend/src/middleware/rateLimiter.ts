@@ -30,6 +30,7 @@ const DEV_WINDOW = isDevelopment ? 1 * 60 * 1000 : 15 * 60 * 1000; // 1 min in d
 export const generalLimiter = rateLimit({
   windowMs: DEV_WINDOW, // 1 min in dev, 15 min in prod
   max: 100 * DEV_MULTIPLIER, // 1000 in dev, 100 in prod
+  keyGenerator: secureKeyGenerator,
   message: {
     error: 'Too many requests, please try again later.',
     retryAfter: isDevelopment ? '1 minute' : '15 minutes'
@@ -48,6 +49,7 @@ export const generalLimiter = rateLimit({
 export const sensitiveLimiter = rateLimit({
   windowMs: DEV_WINDOW, // 1 min in dev, 15 min in prod
   max: 5 * DEV_MULTIPLIER, // 50 in dev, 5 in prod
+  keyGenerator: secureKeyGenerator,
   message: {
     error: 'Too many attempts, please try again later.',
     retryAfter: isDevelopment ? '1 minute' : '15 minutes'
@@ -66,6 +68,7 @@ export const sensitiveLimiter = rateLimit({
 export const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 1000, // Higher limit for authenticated users
+  keyGenerator: secureKeyGenerator,
   message: {
     error: 'API rate limit exceeded.',
     retryAfter: '15 minutes'
@@ -84,6 +87,7 @@ export const apiLimiter = rateLimit({
 export const burstLimiter = rateLimit({
   windowMs: isDevelopment ? 30 * 1000 : 60 * 1000, // 30 sec in dev, 1 min in prod
   max: 3 * DEV_MULTIPLIER, // 30 in dev, 3 in prod
+  keyGenerator: secureKeyGenerator,
   message: {
     error: 'Too many requests in a short time, please wait.',
     retryAfter: isDevelopment ? '30 seconds' : '1 minute'

@@ -28,7 +28,7 @@
     "@types/cookie-parser": "^1.4.9",
     "@types/node-cron": "^3.0.11",
     "@types/uuid": "^10.0.0",
-    "@vonage/server-sdk": "^3.12.0",
+    "@vonage/server-sdk": "^3.22.0",
     "argon2": "^0.43.1",
     "axios": "^1.10.0",
     "bcrypt": "^5.1.0",
@@ -40,6 +40,7 @@
     "express-validator": "^7.2.1",
     "jsonwebtoken": "^9.0.0",
     "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
     "moment-timezone": "^0.6.0",
     "node-cron": "^4.2.1",
     "nodemailer": "^7.0.5",
@@ -50,7 +51,12 @@
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
     "ts-node": "^10.9.1",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "express-rate-limit": "^8.0.1"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
@@ -67,7 +73,6 @@
     "@types/supertest": "^6.0.3",
     "eslint": "^9.31.0",
     "eslint-plugin-security": "^3.0.1",
-    "express-rate-limit": "^8.0.1",
     "ioredis": "^5.6.1",
     "jest": "^30.0.4",
     "nodemon": "^3.0.1",

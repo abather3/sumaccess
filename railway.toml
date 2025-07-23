@@ -1,25 +1,23 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "npm ci && npm run build"
 
 [deploy]
-startCommand = "npm start"
 healthcheckPath = "/health"
-healthcheckTimeout = 300
+healthcheckTimeout = 60
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 3
 
-[env]
+[[services]]
+name = "backend"
+source = "backend"
+
+[services.build]
+buildCommand = "npm ci && npm run build"
+startCommand = "npm start"
+
+[services.variables]
 NODE_ENV = "production"
-NODE_VERSION = "20"
 PORT = "5000"
-
-# Database will be automatically injected by Railway PostgreSQL service
-# JWT Secrets - SET THESE IN RAILWAY DASHBOARD
-# JWT_SECRET = "your-jwt-secret"
-# JWT_REFRESH_SECRET = "your-jwt-refresh-secret"
-
-# Application Configuration
 JWT_EXPIRES_IN = "30m"
 JWT_REFRESH_EXPIRES_IN = "7d"
 SESSION_TIMEOUT = "3600000"
@@ -54,3 +52,34 @@ ENABLE_HELMET_SECURITY = "true"
 SECURE_COOKIES = "true"
 MAX_FILE_SIZE = "5242880"
 UPLOAD_PATH = "./uploads"
+
+[[services]]
+name = "frontend"
+source = "frontend"
+
+[services.build]
+buildCommand = "npm ci && npm run build"
+startCommand = "npx serve -s build -l $PORT"
+
+[services.variables]
+NODE_ENV = "production"
+GENERATE_SOURCEMAP = "false"
+DISABLE_ESLINT_PLUGIN = "true"
+BUILD_PATH = "build"
+PUBLIC_PATH = "/"
+INLINE_RUNTIME_CHUNK = "false"
+IMAGE_INLINE_SIZE_LIMIT = "0"
+REACT_APP_ENABLE_HTTPS = "true"
+REACT_APP_ENABLE_DEBUG = "false"
+REACT_APP_ENABLE_CONSOLE_LOGS = "false"
+REACT_APP_ENABLE_PWA = "false"
+REACT_APP_DEFAULT_THEME = "light"
+REACT_APP_TIMEZONE = "Asia/Manila"
+REACT_APP_LOCALE = "en-PH"
+REACT_APP_CURRENCY = "PHP"
+REACT_APP_API_TIMEOUT = "30000"
+REACT_APP_MAX_RETRIES = "3"
+REACT_APP_WS_RECONNECT_DELAY = "5000"
+REACT_APP_WS_MAX_RECONNECT_ATTEMPTS = "10"
+REACT_APP_ENABLE_SERVICE_WORKER = "true"
+REACT_APP_CACHE_ASSETS = "true"
