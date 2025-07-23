@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: escashop-postgres
+    environment:
+      POSTGRES_DB: escashop
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    networks:
+      - escashop-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Backend Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: escashop-backend
+    environment:
+      - NODE_ENV=development
+      - PORT=5000
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=escashop
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/escashop
+      - JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+      - JWT_REFRESH_SECRET=your-super-secret-refresh-key-change-this-in-production
+      - JWT_EXPIRES_IN=1h
+      - JWT_REFRESH_EXPIRES_IN=7d
+      - FRONTEND_URL=http://localhost:3000
+      - EMAIL_SERVICE_ENABLED=true
+      - EMAIL_SERVICE=gmail
+      - EMAIL_USER=jefor16@gmail.com
+      - EMAIL_PASSWORD=cutbcijqacobypak
+      - EMAIL_FROM=jefor16@gmail.com
+      - SMS_PROVIDER=vonage
+      - SMS_ENABLED=true
+      - SMS_FROM=EscaShop
+      - VONAGE_API_KEY=24580886
+      - VONAGE_API_SECRET=0YSON3xZYOEWYLyf
+      - GOOGLE_SHEETS_URL=https://script.google.com/macros/s/AKfycbxsprrzPNwmmtqv_upUPX-AW1la7Au-vtrA1dQN0kpl8sP8ZgmAJivArszcbhm5TjtNfg/exec
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend/uploads:/app/uploads
+      - ./backend/logs:/app/logs
+    networks:
+      - escashop-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: escashop-frontend
+    environment:
+      - NODE_ENV=production
+      - REACT_APP_API_URL=http://localhost:5000
+      - REACT_APP_SOCKET_URL=http://localhost:5000
+    ports:
+      - "3000:3000"
+    networks:
+      - escashop-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+# Volumes
+volumes:
+  postgres_data:
+    driver: local
+
+# Networks
+networks:
+  escashop-network:
+    driver: bridge
