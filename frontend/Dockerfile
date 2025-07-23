@@ -8,13 +8,16 @@ WORKDIR /app
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install dependencies with optimizations
+RUN npm ci --no-audit --no-fund --silent
 
 # Copy source code
 COPY . .
 
-# Build React application
+# Build React application with memory optimization
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+ENV GENERATE_SOURCEMAP=false
+ENV CI=false
 RUN npm run build
 
 # Stage 2: Production stage
