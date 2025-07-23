@@ -1514,7 +1514,7 @@ const CustomerManagement: React.FC = () => {
           {/* Search and Filters */}
           <Box sx={{ mb: 2, width: '100%', overflow: 'hidden' }}>
             <Grid container spacing={2}>
-              <Grid size={{ xs: 12, md: 4 }}>
+              <Grid item xs={12} md={4}>
                 <TextField
                   label="Search customers"
                   value={searchTerm}
@@ -1527,7 +1527,7 @@ const CustomerManagement: React.FC = () => {
                   }}
                 />
               </Grid>
-              <Grid size={{ xs: 12, sm: 6, md: 2 }}>
+              <Grid item xs={12} sm={6} md={2}>
                 <FormControl fullWidth size="small" sx={{ minWidth: 0 }}>
                   <InputLabel>Status</InputLabel>
                   <Select
@@ -1543,7 +1543,7 @@ const CustomerManagement: React.FC = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <Grid item xs={12} sm={6} md={3}>
                 <TextField
                   label="Start Date"
                   type="date"
@@ -1555,7 +1555,7 @@ const CustomerManagement: React.FC = () => {
                   InputLabelProps={{ shrink: true }}
                 />
               </Grid>
-              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <Grid item xs={12} sm={6} md={3}>
                 <TextField
                   label="End Date"
                   type="date"

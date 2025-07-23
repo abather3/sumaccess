@@ -221,7 +221,7 @@ const SalesAgentDashboard: React.FC = () => {
           overflow: 'hidden',
           boxSizing: 'border-box'
         }}>
-        	<Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        	<Grid item xs={12} sm={6} md={3}>
           <Card sx={{ 
             width: '100%',
             maxWidth: '100%',
@@ -246,7 +246,7 @@ const SalesAgentDashboard: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid item xs={12} sm={6} md={3}>
           <Card sx={{ 
             width: '100%',
             maxWidth: '100%',
@@ -271,7 +271,7 @@ const SalesAgentDashboard: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid item xs={12} sm={6} md={3}>
           <Card sx={{ 
             width: '100%',
             maxWidth: '100%',
@@ -296,7 +296,7 @@ const SalesAgentDashboard: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid item xs={12} sm={6} md={3}>
           <Card sx={{ 
             width: '100%',
             maxWidth: '100%',
@@ -330,7 +330,7 @@ const SalesAgentDashboard: React.FC = () => {
           overflow: 'hidden',
           boxSizing: 'border-box'
         }}>
-        	<Grid size={{ xs: 12, md: 6 }}>
+        	<Grid item xs={12} md={6}>
           <Card sx={{ 
             width: '100%',
             maxWidth: '100%',
@@ -342,7 +342,7 @@ const SalesAgentDashboard: React.FC = () => {
                 Today's Status Breakdown
               </Typography>
               <Grid container spacing={2}>
-                <Grid size={6}>
+                <Grid item xs={6}>
                   <Box textAlign="center">
                     <Typography variant="h3" color="warning.main">
                       {stats?.waiting || 0}
@@ -352,7 +352,7 @@ const SalesAgentDashboard: React.FC = () => {
                     </Typography>
                   </Box>
                 </Grid>
-                <Grid size={6}>
+                <Grid item xs={6}>
                   <Box textAlign="center">
                     <Typography variant="h3" color="info.main">
                       {stats?.serving || 0}
@@ -362,7 +362,7 @@ const SalesAgentDashboard: React.FC = () => {
                     </Typography>
                   </Box>
                 </Grid>
-                <Grid size={6}>
+                <Grid item xs={6}>
                   <Box textAlign="center">
                     <Typography variant="h3" color="success.main">
                       {stats?.completed || 0}
@@ -372,7 +372,7 @@ const SalesAgentDashboard: React.FC = () => {
                     </Typography>
                   </Box>
                 </Grid>
-                <Grid size={6}>
+                <Grid item xs={6}>
                   <Box textAlign="center">
                     <Typography variant="h3" color="error.main">
                       {stats?.cancelled || 0}
@@ -387,7 +387,7 @@ const SalesAgentDashboard: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6 }}>
+        <Grid item xs={12} md={6}>
           <Card sx={{ 
             width: '100%',
             maxWidth: '100%',

@@ -159,7 +159,7 @@ const AdminPanel: React.FC = () => {
             boxSizing: 'border-box'
           }}>
             {adminFeatures.map((feature, index) => (
-              <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }} key={feature.title}>
+              <Grid item xs={12} sm={12} md={6} lg={4} key={feature.title}>
                 <Card sx={{ 
                   height: '100%', 
                   width: '100%', 
