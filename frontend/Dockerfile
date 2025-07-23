@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies with optimizations
-RUN npm ci --only=production --silent --no-audit --no-fund
+RUN npm ci --silent --no-audit --no-fund
 
 # Install serve globally
 RUN npm install -g serve
