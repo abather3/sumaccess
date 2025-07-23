@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies with optimizations
-RUN npm ci --silent --no-audit --no-fund
+RUN npm install --silent --no-audit --no-fund
 
 # Install serve globally
 RUN npm install -g serve
@@ -14,13 +14,23 @@ RUN npm install -g serve
 # Copy source code
 COPY . .
 
+# Accept build arguments for React environment variables
+ARG REACT_APP_API_URL
+ARG REACT_APP_SOCKET_URL
+ARG NODE_ENV=production
+
 # Set build environment variables for optimization
-ENV NODE_OPTIONS="--max-old-space-size=4096"
+ENV NODE_OPTIONS="--max-old-space-size=6144 --no-deprecation"
 ENV GENERATE_SOURCEMAP=false
 ENV CI=false
 ENV DISABLE_ESLINT_PLUGIN=true
 ENV TSC_COMPILE_ON_ERROR=true
+ENV SKIP_PREFLIGHT_CHECK=true
+
+# Set React environment variables from build arguments
 ENV REACT_APP_API_URL=$REACT_APP_API_URL
+ENV REACT_APP_SOCKET_URL=$REACT_APP_SOCKET_URL
+ENV NODE_ENV=$NODE_ENV
 
 # Build the application
 RUN npm run build

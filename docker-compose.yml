@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # PostgreSQL Database
   postgres:
@@ -47,7 +45,6 @@ services:
       - EMAIL_SERVICE=gmail
       - EMAIL_USER=jefor16@gmail.com
       - EMAIL_PASSWORD=cutbcijqacobypak
-      - EMAIL_FROM=jefor16@gmail.com
       - SMS_PROVIDER=vonage
       - SMS_ENABLED=true
       - SMS_FROM=EscaShop
@@ -64,6 +61,12 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     restart: unless-stopped
 
   # Frontend Service
@@ -71,6 +74,10 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - REACT_APP_API_URL=http://localhost:5000
+        - REACT_APP_SOCKET_URL=http://localhost:5000
+        - NODE_ENV=production
     container_name: escashop-frontend
     environment:
       - NODE_ENV=production
@@ -81,7 +88,8 @@ services:
     networks:
       - escashop-network
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     restart: unless-stopped
 
 # Volumes

@@ -10,7 +10,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install all dependencies (including dev dependencies)
-RUN npm ci
+RUN npm install
 
 # Copy source code
 COPY . .
@@ -44,14 +44,24 @@ RUN npm ci
 # Copy source code
 COPY . .
 
+# Accept build arguments for React environment variables
+ARG REACT_APP_API_URL
+ARG REACT_APP_SOCKET_URL
+ARG NODE_ENV=production
+
+# Set React environment variables from build arguments
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+ENV REACT_APP_SOCKET_URL=$REACT_APP_SOCKET_URL
+ENV NODE_ENV=$NODE_ENV
+
 # Build React application
 RUN npm run build
 
 # Production stage
 FROM node:20-alpine AS production
 
-# Install serve globally
-RUN npm install -g serve
+# Install serve globally and wget for health checks
+RUN npm install -g serve && apk add --no-cache wget
 
 # Create a non-root user
 RUN addgroup -g 1001 -S nodejs

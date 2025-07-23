@@ -4,8 +4,8 @@ FROM node:20-alpine
 # Set working directory
 WORKDIR /app
 
-# Install dependencies needed for native modules
-RUN apk add --no-cache python3 make g++
+# Install dependencies needed for native modules and curl for health checks
+RUN apk add --no-cache python3 make g++ curl
 
 # Copy package.json and package-lock.json (if available)
 COPY package*.json ./
