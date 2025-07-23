@@ -1,0 +1,16 @@
+[build]
+workingDirectory = "frontend"
+
+[install]
+cmd = "npm install"
+
+[build.commands]
+cmd = "npm run build"
+
+[start]
+cmd = "npx serve -s build -p $PORT"
+
+[variables]
+NODE_ENV = "production"
+GENERATE_SOURCEMAP = "false"
+DISABLE_ESLINT_PLUGIN = "true"
