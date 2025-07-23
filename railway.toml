@@ -58,8 +58,9 @@ name = "frontend"
 source = "frontend"
 
 [services.build]
-buildCommand = "npm ci && npm run build"
-startCommand = "npx serve -s build -l $PORT"
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile.frontend"
+startCommand = "serve -s build -l $PORT"
 
 [services.variables]
 NODE_ENV = "production"
