@@ -37,5 +37,5 @@ EXPOSE 5000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node --version || exit 1
 
-# Run migration and start server
-CMD ["sh", "-c", "npm run migrate && npm start"]
+# Start server with proper sequence
+CMD ["npm", "start"]
