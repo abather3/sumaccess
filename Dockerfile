@@ -1,26 +1,26 @@
-FROM node:20-alpine
+# Force cache invalidation with new structure
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files from frontend subdirectory  
+# Copy package files and install dependencies
 COPY frontend/package*.json ./
-
-# Install dependencies
 RUN npm install
 
-# Copy files - Railway does this but we'll do it explicitly
+# Copy all source files
 COPY . .
 
-# Create public directory and index.html - this MUST happen after COPY
-RUN mkdir -p public && echo '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Esca Shop Premium Eyewear</title></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"></div></body></html>' > public/index.html
+# CRITICAL: Create the missing public/index.html file
+RUN echo "FORCE CACHE INVALIDATION - Creating public directory and index.html" && \
+    mkdir -p public && \
+    echo '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Esca Shop Premium Eyewear</title></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"></div></body></html>' > public/index.html && \
+    echo "✅ Successfully created public/index.html" && \
+    ls -la public/
 
-# Verify the file exists
-RUN echo "Contents of /app:" && ls -la
+# Double-check before build
+RUN echo "FINAL CHECK:" && ls -la public/index.html && echo "File content:" && cat public/index.html
 
-# Verify public directory
-RUN echo "Contents of /app/public:" && ls -la public/ || echo "public directory not found"
-
-# Build the application - this should work now
+# Build the React application
 RUN npm run build
 
 # Install serve globally
