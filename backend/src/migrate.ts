@@ -4,6 +4,7 @@ import path from 'path';
 import { runSystemSettingsMigration } from './database/migrations/system_settings';
 
 async function runMigrations() {
+  // Force Railway rebuild trigger - v1.1
   console.log('🚀 Starting database migrations...');
   
   try {
