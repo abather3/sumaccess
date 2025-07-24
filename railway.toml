@@ -57,6 +57,9 @@ UPLOAD_PATH = "./uploads"
 name = "frontend"
 source = "frontend"
 
+[services.build]
+builder = "NIXPACKS"
+
 [services.variables]
 NODE_ENV = "production"
 GENERATE_SOURCEMAP = "false"
