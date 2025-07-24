@@ -39,8 +39,9 @@ async function runMigrations() {
     
     try {
       files = fs.readdirSync(migrationsPath).sort();
+      console.log(`Found ${files.length} files in migrations directory:`, files);
     } catch (error) {
-      console.log('No migrations directory found');
+      console.log('No migrations directory found:', error);
     }
 
     for (const file of files) {
