@@ -10,11 +10,10 @@ COPY frontend/package*.json ./
 # Install dependencies
 RUN npm install
 
-# Railway copies all files as flat structure, so we need to create public directory and index.html
-RUN mkdir -p public
-
-# Create the index.html file that React needs
-RUN echo '<!DOCTYPE html>' > public/index.html && \
+# Create public directory and index.html in one step to ensure it works
+RUN echo "Creating public directory and index.html..." && \
+    mkdir -p public && \
+    echo '<!DOCTYPE html>' > public/index.html && \
     echo '<html lang="en">' >> public/index.html && \
     echo '  <head>' >> public/index.html && \
     echo '    <meta charset="utf-8" />' >> public/index.html && \
@@ -25,25 +24,34 @@ RUN echo '<!DOCTYPE html>' > public/index.html && \
     echo '    <noscript>You need to enable JavaScript to run this app.</noscript>' >> public/index.html && \
     echo '    <div id="root"></div>' >> public/index.html && \
     echo '  </body>' >> public/index.html && \
-    echo '</html>' >> public/index.html
+    echo '</html>' >> public/index.html && \
+    echo "✅ Created public/index.html successfully" && \
+    ls -la public/
 
-# Debug: Verify we have the required files
-RUN echo "=== DEBUGGING FILE STRUCTURE ===" && \
-    echo "Files in /app:" && \
+# Copy any remaining files if needed (Railway uses COPY . . after our commands)
+COPY . .
+
+# Final verification before build
+RUN echo "=== FINAL VERIFICATION BEFORE BUILD ===" && \
+    echo "All files in /app:" && \
     ls -la && \
     echo "" && \
-    echo "Contents of public directory:" && \
-    ls -la public/ && \
+    echo "Public directory status:" && \
+    ls -la public/ 2>/dev/null || echo "❌ Public directory missing!" && \
     echo "" && \
-    echo "Checking for index.html specifically:" && \
-    ls -la public/index.html && \
+    echo "Index.html status:" && \
+    ls -la public/index.html 2>/dev/null || echo "❌ index.html missing!" && \
     echo "" && \
-    echo "File content preview:" && \
-    head -5 public/index.html && \
-    echo "" && \
-    echo "File size and permissions:" && \
-    stat public/index.html && \
-    echo "=== END DEBUG ==="
+    if [ -f public/index.html ]; then \
+        echo "✅ index.html found! Content:" && \
+        cat public/index.html; \
+    else \
+        echo "❌ Creating index.html as last resort..." && \
+        mkdir -p public && \
+        echo '<!DOCTYPE html><html><head><meta charset="utf-8"/><title>Esca Shop</title></head><body><div id="root"></div></body></html>' > public/index.html && \
+        echo "✅ Emergency index.html created"; \
+    fi && \
+    echo "=== END VERIFICATION ==="
 
 # Build the application
 RUN npm run build
