@@ -12,3 +12,4 @@ cmd = "npx serve -s build -l $PORT"
 NODE_ENV = "production"
 GENERATE_SOURCEMAP = "false"
 DISABLE_ESLINT_PLUGIN = "true"
+# Force Railway to recognize Nixpacks configuration
