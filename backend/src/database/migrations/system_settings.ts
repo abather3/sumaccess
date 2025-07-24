@@ -44,7 +44,23 @@ export async function runSystemSettingsMigration(): Promise<void> {
           console.log(`Adding missing ${column} column to system_settings table...`);
           switch (column) {
             case 'key':
-              await pool.query(`ALTER TABLE system_settings ADD COLUMN key VARCHAR(255) UNIQUE NOT NULL`);
+              // Add key column without NOT NULL first, then update and add constraint
+              await pool.query(`ALTER TABLE system_settings ADD COLUMN key VARCHAR(255)`);
+              // If there are existing rows, give them a default key
+              await pool.query(`UPDATE system_settings SET key = 'setting_' || id WHERE key IS NULL`);
+              // Now add the NOT NULL constraint
+              await pool.query(`ALTER TABLE system_settings ALTER COLUMN key SET NOT NULL`);
+              // Check if unique constraint already exists
+              const constraintExists = await pool.query(`
+                SELECT constraint_name 
+                FROM information_schema.table_constraints 
+                WHERE table_name = 'system_settings' 
+                AND constraint_type = 'UNIQUE' 
+                AND constraint_name LIKE '%key%'
+              `);
+              if (constraintExists.rows.length === 0) {
+                await pool.query(`ALTER TABLE system_settings ADD CONSTRAINT system_settings_key_unique UNIQUE (key)`);
+              }
               break;
             case 'description':
               await pool.query(`ALTER TABLE system_settings ADD COLUMN description TEXT`);
@@ -63,17 +79,42 @@ export async function runSystemSettingsMigration(): Promise<void> {
       }
     }
 
-    // Create indexes for better performance (only if key column exists)
-    const keyColumnCheck = await pool.query(`
+    // Create indexes for better performance (verify all columns exist first)
+    const columnsCheck = await pool.query(`
       SELECT column_name 
       FROM information_schema.columns 
-      WHERE table_name = 'system_settings' AND column_name = 'key'
+      WHERE table_name = 'system_settings' 
+      AND column_name IN ('key', 'category', 'data_type')
+      ORDER BY column_name
     `);
     
-    if (keyColumnCheck.rows.length > 0) {
+    console.log('Found system_settings columns:', columnsCheck.rows.map(r => r.column_name));
+    
+    // Only create indexes if all required columns exist
+    const foundColumns = columnsCheck.rows.map(r => r.column_name);
+    const requiredIndexColumns = ['key', 'category', 'data_type'];
+    const allColumnsExist = requiredIndexColumns.every(col => foundColumns.includes(col));
+    
+    if (allColumnsExist) {
+      console.log('All required columns exist, creating indexes...');
+      
       await pool.query(`
         CREATE INDEX IF NOT EXISTS idx_system_settings_key ON system_settings(key)
       `);
+      
+      await pool.query(`
+        CREATE INDEX IF NOT EXISTS idx_system_settings_category ON system_settings(category)
+      `);
+      
+      await pool.query(`
+        CREATE INDEX IF NOT EXISTS idx_system_settings_data_type ON system_settings(data_type)
+      `);
+      
+      console.log('Created system_settings indexes successfully');
+    } else {
+      console.log('⚠️  Not all required columns exist for indexing. Missing:', 
+        requiredIndexColumns.filter(col => !foundColumns.includes(col)));
+      console.log('⚠️  Skipping index creation. Table schema may be incomplete.');
     }
 
     // Create trigger to update updated_at timestamp

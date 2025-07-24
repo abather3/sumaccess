@@ -59,6 +59,25 @@ Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
 
 ---
 
+### ✅ RESOLVED: System Settings Index Creation Error
+
+**Error Message**:
+```
+column "key" does not exist
+```
+
+**Root Cause**: The `system_settings.ts` migration was trying to create indexes on columns that might not exist if the table had an incomplete schema from a previous failed migration.
+
+**Fix Applied**: 
+1. Enhanced column existence verification before index creation
+2. Safer NOT NULL column addition process
+3. Constraint duplicate prevention
+4. Better error reporting and logging
+
+**Status**: ✅ Fixed in system_settings.ts migration
+
+---
+
 ### 4. SQL Procedure Parameter Error
 
 **Error Message**:
