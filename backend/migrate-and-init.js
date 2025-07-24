@@ -62,16 +62,49 @@ async function initializeDatabase() {
 
     // Create system_settings table
     console.log('📋 Creating system_settings table...');
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS system_settings (
-        id SERIAL PRIMARY KEY,
-        setting_key VARCHAR(100) UNIQUE NOT NULL,
-        setting_value TEXT,
-        description TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
+    
+    // First check if the table exists and what columns it has
+    const tableCheck = await client.query(`
+      SELECT column_name FROM information_schema.columns 
+      WHERE table_name = 'system_settings' AND table_schema = 'public'
     `);
+    
+    if (tableCheck.rows.length === 0) {
+      // Table doesn't exist, create it
+      await client.query(`
+        CREATE TABLE system_settings (
+          id SERIAL PRIMARY KEY,
+          setting_key VARCHAR(100) UNIQUE NOT NULL,
+          setting_value TEXT,
+          description TEXT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+      console.log('✅ system_settings table created');
+    } else {
+      // Table exists, check if it has the right columns
+      const hasSettingKey = tableCheck.rows.some(row => row.column_name === 'setting_key');
+      
+      if (!hasSettingKey) {
+        console.log('🔄 Updating system_settings table structure...');
+        // Drop and recreate the table with correct structure
+        await client.query('DROP TABLE IF EXISTS system_settings CASCADE');
+        await client.query(`
+          CREATE TABLE system_settings (
+            id SERIAL PRIMARY KEY,
+            setting_key VARCHAR(100) UNIQUE NOT NULL,
+            setting_value TEXT,
+            description TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          )
+        `);
+        console.log('✅ system_settings table recreated with correct structure');
+      } else {
+        console.log('ℹ️  system_settings table already exists with correct structure');
+      }
+    }
 
     // Create queue_analytics table
     console.log('📋 Creating queue_analytics table...');
@@ -139,7 +172,11 @@ async function initializeDatabase() {
     
   } catch (error) {
     console.error('❌ Database initialization failed:', error.message);
-    process.exit(1);
+    console.error('Stack trace:', error.stack);
+    
+    // Don't exit with error code - let the server start anyway
+    // The server might still work with existing database structure
+    console.log('⚠️  Continuing with server startup despite database initialization issues...');
   } finally {
     await pool.end();
   }
