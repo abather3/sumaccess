@@ -4,8 +4,8 @@
     "backend": {
       "source": "backend",
       "build": {
-        "builder": "NIXPACKS",
-        "buildCommand": "npm install && npm run build"
+        "builder": "DOCKERFILE",
+        "dockerfilePath": "backend/Dockerfile"
       },
       "deploy": {
         "startCommand": "npm start",
