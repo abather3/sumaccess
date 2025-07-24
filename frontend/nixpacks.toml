@@ -1,0 +1,14 @@
+[phases.build]
+dependsOn = ["install"]
+cmds = ["npm run build"]
+
+[phases.install]
+cmds = ["npm install"]
+
+[start]
+cmd = "npx serve -s build -l $PORT"
+
+[variables]
+NODE_ENV = "production"
+GENERATE_SOURCEMAP = "false"
+DISABLE_ESLINT_PLUGIN = "true"

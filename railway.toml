@@ -57,11 +57,6 @@ UPLOAD_PATH = "./uploads"
 name = "frontend"
 source = "frontend"
 
-[services.build]
-builder = "NIXPACKS"
-buildCommand = "npm install && npm run build"
-startCommand = "npx serve -s build -l $PORT"
-
 [services.variables]
 NODE_ENV = "production"
 GENERATE_SOURCEMAP = "false"
