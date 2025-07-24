@@ -55,10 +55,11 @@ UPLOAD_PATH = "./uploads"
 
 [[services]]
 name = "frontend"
-source = "frontend"
+source = "."
 
 [services.build]
-builder = "NIXPACKS"
+builder = "DOCKER"
+dockerfilePath = "Dockerfile"
 
 [services.variables]
 NODE_ENV = "production"
