@@ -3,7 +3,9 @@ import { getSecureConfig } from './config';
 import { connectSQLiteDatabase, initializeSQLiteDatabase, sqlitePool } from './database-sqlite';
 
 const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/escashop';
-const USE_SQLITE = process.env.NODE_ENV === 'development' && !process.env.DATABASE_URL;
+// Force SQLite usage for testing - comment this line to revert to PostgreSQL  
+// Check for testing environment variable first, then fallback to development logic
+const USE_SQLITE = process.env.USE_SQLITE_TESTING === 'true';
 
 // Database configuration based on environment
 let pool: any;

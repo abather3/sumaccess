@@ -6,7 +6,7 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { config } from './config/config';
 import { generalLimiter, sensitiveLimiter, burstLimiter } from './middleware/rateLimiter';
-import { connectDatabase, initializeDatabase } from './config/database';
+import { connectDatabase, initializeDatabase, pool } from './config/database';
 import authRoutes from './routes/auth';
 import userRoutes from './routes/users';
 import customerRoutes from './routes/customers';
@@ -57,8 +57,29 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Health check
-app.get('/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+app.get('/health', async (req, res) => {
+  try {
+    // Test database connection
+    const result = await pool.query('SELECT 1 as test');
+    
+    res.json({ 
+      status: 'OK', 
+      timestamp: new Date().toISOString(),
+      database: 'connected',
+      uptime: process.uptime(),
+      environment: process.env.NODE_ENV || 'development',
+      databaseType: 'SQLite'
+    });
+  } catch (error: any) {
+    res.status(503).json({
+      status: 'unhealthy',
+      timestamp: new Date().toISOString(),
+      database: 'disconnected',
+      error: error.message,
+      uptime: process.uptime(),
+      environment: process.env.NODE_ENV || 'development'
+    });
+  }
 });
 
 // Sensitive routes with stricter limits
@@ -152,7 +173,7 @@ async function startServer() {
     console.log('Database connected successfully');
     
     // Initialize database tables
-    // await initializeDatabase(); // Skip - schema already initialized
+    await initializeDatabase(); // Initialize SQLite schema
     
     // Initialize Daily Queue Scheduler
     try {

@@ -110,6 +110,10 @@ CREATE TABLE IF NOT EXISTS system_settings (
     id SERIAL PRIMARY KEY,
     key VARCHAR(255) UNIQUE NOT NULL,
     value TEXT NOT NULL,
+    description TEXT,
+    category VARCHAR(100) NOT NULL,
+    data_type VARCHAR(20) NOT NULL CHECK (data_type IN ('string', 'number', 'boolean', 'json')),
+    is_public BOOLEAN NOT NULL DEFAULT false,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

@@ -43,8 +43,10 @@ async function createAdmin() {
       console.log('   Status:', result.rows[0].status);
     }
     
-    // Close pool
-    await pool.end();
+    // Close pool (SQLite doesn't need explicit closing)
+    if (pool.end) {
+      await pool.end();
+    }
     
   } catch (error) {
     console.error('❌ Error creating admin user:', error);
