@@ -1,6 +1,6 @@
 // Post-migration data setup script
 const { Pool } = require('pg');
-const bcrypt = require('bcrypt');
+const argon2 = require('argon2');
 
 async function setupBasicData() {
   console.log('🔧 Setting up basic data after migrations...');
@@ -15,16 +15,21 @@ async function setupBasicData() {
     console.log('✅ Database connected successfully!');
 
     // Check if admin user exists
-    const adminCheck = await client.query('SELECT id FROM users WHERE username = $1', ['admin']);
+    const adminCheck = await client.query('SELECT id FROM users WHERE email = $1', ['admin@escashop.com']);
     
     if (adminCheck.rows.length === 0) {
       console.log('👤 Creating admin user...');
-      const hashedPassword = await bcrypt.hash('admin123', 10);
+      const hashedPassword = await argon2.hash('admin123', {
+        type: argon2.argon2id,
+        memoryCost: 2 ** 16, // 64 MiB
+        timeCost: 3,
+        parallelism: 1
+      });
       
       await client.query(`
-        INSERT INTO users (username, email, password_hash, full_name, role, is_active)
-        VALUES ($1, $2, $3, $4, $5, $6)
-      `, ['admin', 'admin@escashop.com', hashedPassword, 'System Administrator', 'admin', true]);
+        INSERT INTO users (email, full_name, password_hash, role, status)
+        VALUES ($1, $2, $3, $4, $5)
+      `, ['admin@escashop.com', 'System Administrator', hashedPassword, 'admin', 'active']);
       
       console.log('✅ Admin user created: admin@escashop.com / admin123');
     } else {
