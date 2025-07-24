@@ -8,7 +8,7 @@ healthcheckPath = "/health"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 3
-# Force rebuild to pick up latest package.json start script
+# Force rebuild to pick up latest package.json start script - v2
 
 [env]
 NODE_ENV = "production"
