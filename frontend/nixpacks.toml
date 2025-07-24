@@ -6,7 +6,7 @@ cmds = ["npm run build"]
 cmds = ["npm install"]
 
 [start]
-cmd = "npx serve -s build -l $PORT"
+cmd = "npx serve -s build -l $PORT -d false"
 
 [variables]
 NODE_ENV = "production"

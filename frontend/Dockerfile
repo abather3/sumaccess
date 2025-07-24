@@ -74,8 +74,8 @@ RUN npm run build
 # Install serve globally
 RUN npm install -g serve
 
-# Expose port
-EXPOSE 3000
+# Expose port (Railway will set this dynamically)
+EXPOSE $PORT
 
-# Start the application
-CMD ["serve", "-s", "build", "-l", "3000"]
+# Start the application using Railway's PORT environment variable
+CMD ["sh", "-c", "serve -s build -l $PORT"]
