@@ -37,13 +37,13 @@ router.post('/login',
     // Generate JWT tokens
     const accessToken = (jwt as any).sign(
       { userId: user!.id, email: user!.email, role: user!.role },
-      config.JWT_SECRET,
+      config.JWT_SECRET_FINAL,
       { expiresIn: config.JWT_EXPIRES_IN }
     );
 
     const refreshToken = (jwt as any).sign(
       { userId: user!.id, tokenId: Date.now() }, // Add tokenId for rotation
-      config.JWT_REFRESH_SECRET,
+      config.JWT_REFRESH_SECRET_FINAL,
       { expiresIn: config.JWT_REFRESH_EXPIRES_IN }
     );
 
@@ -88,7 +88,7 @@ router.post('/refresh', asyncErrorHandler(async (req: Request, res: Response): P
   }
 
   try {
-    const decoded = jwt.verify(refreshToken, config.JWT_REFRESH_SECRET) as any;
+    const decoded = jwt.verify(refreshToken, config.JWT_REFRESH_SECRET_FINAL) as any;
     const user = await UserService.findById(decoded.userId);
 
     if (!user) {
@@ -102,7 +102,7 @@ router.post('/refresh', asyncErrorHandler(async (req: Request, res: Response): P
     // Generate new access token
     const accessToken = (jwt as any).sign(
       { userId: user!.id, email: user!.email, role: user!.role },
-      config.JWT_SECRET,
+      config.JWT_SECRET_FINAL,
       { expiresIn: config.JWT_EXPIRES_IN }
     );
 
@@ -112,7 +112,7 @@ router.post('/refresh', asyncErrorHandler(async (req: Request, res: Response): P
     if (config.TOKEN_ROTATION_ENABLED) {
       newRefreshToken = (jwt as any).sign(
         { userId: user!.id, tokenId: Date.now() },
-        config.JWT_REFRESH_SECRET,
+        config.JWT_REFRESH_SECRET_FINAL,
         { expiresIn: config.JWT_REFRESH_EXPIRES_IN }
       );
       
@@ -315,7 +315,7 @@ router.post('/logout', async (req: Request, res: Response): Promise<void> => {
 
     if (token) {
       try {
-        const decoded = jwt.verify(token, config.JWT_SECRET) as any;
+        const decoded = jwt.verify(token, config.JWT_SECRET_FINAL) as any;
         
         // Log activity
         await ActivityService.log({
@@ -356,7 +356,7 @@ router.get('/verify', async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const decoded = jwt.verify(token, config.JWT_SECRET) as any;
+    const decoded = jwt.verify(token, config.JWT_SECRET_FINAL) as any;
     const user = await UserService.findById(decoded.userId);
 
     if (!user || user.status !== 'active') {

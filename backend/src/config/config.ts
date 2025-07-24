@@ -63,6 +63,14 @@ export const config = {
   JWT_SECRET: process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production',
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || 'your-super-secret-refresh-key-change-in-production',
   
+  // Force direct environment variable access in production
+  get JWT_SECRET_FINAL() {
+    return process.env.JWT_SECRET || this.JWT_SECRET;
+  },
+  get JWT_REFRESH_SECRET_FINAL() {
+    return process.env.JWT_REFRESH_SECRET || this.JWT_REFRESH_SECRET;
+  },
+  
   // Backup
   BACKUP_RETENTION_DAYS: parseInt(process.env.BACKUP_RETENTION_DAYS || '30'),
   
