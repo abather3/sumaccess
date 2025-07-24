@@ -60,51 +60,21 @@ async function initializeDatabase() {
       )
     `);
 
-    // Create system_settings table
+    // Create system_settings table with schema matching existing migration
     console.log('📋 Creating system_settings table...');
-    
-    // First check if the table exists and what columns it has
-    const tableCheck = await client.query(`
-      SELECT column_name FROM information_schema.columns 
-      WHERE table_name = 'system_settings' AND table_schema = 'public'
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS system_settings (
+        id SERIAL PRIMARY KEY,
+        key VARCHAR(255) NOT NULL UNIQUE,
+        value TEXT NOT NULL,
+        description TEXT,
+        category VARCHAR(100) NOT NULL,
+        data_type VARCHAR(20) NOT NULL CHECK (data_type IN ('string', 'number', 'boolean', 'json')),
+        is_public BOOLEAN NOT NULL DEFAULT false,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
     `);
-    
-    if (tableCheck.rows.length === 0) {
-      // Table doesn't exist, create it
-      await client.query(`
-        CREATE TABLE system_settings (
-          id SERIAL PRIMARY KEY,
-          setting_key VARCHAR(100) UNIQUE NOT NULL,
-          setting_value TEXT,
-          description TEXT,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-      `);
-      console.log('✅ system_settings table created');
-    } else {
-      // Table exists, check if it has the right columns
-      const hasSettingKey = tableCheck.rows.some(row => row.column_name === 'setting_key');
-      
-      if (!hasSettingKey) {
-        console.log('🔄 Updating system_settings table structure...');
-        // Drop and recreate the table with correct structure
-        await client.query('DROP TABLE IF EXISTS system_settings CASCADE');
-        await client.query(`
-          CREATE TABLE system_settings (
-            id SERIAL PRIMARY KEY,
-            setting_key VARCHAR(100) UNIQUE NOT NULL,
-            setting_value TEXT,
-            description TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-          )
-        `);
-        console.log('✅ system_settings table recreated with correct structure');
-      } else {
-        console.log('ℹ️  system_settings table already exists with correct structure');
-      }
-    }
 
     // Create queue_analytics table
     console.log('📋 Creating queue_analytics table...');
@@ -139,21 +109,21 @@ async function initializeDatabase() {
     // Insert default system settings
     console.log('⚙️  Setting up default system settings...');
     const defaultSettings = [
-      ['business_name', 'EscaShop', 'Business name displayed on receipts'],
-      ['business_address', '123 Main Street, City, Country', 'Business address for receipts'],
-      ['business_phone', '+1234567890', 'Business contact phone'],
-      ['receipt_footer', 'Thank you for your business!', 'Footer text on receipts'],
-      ['currency_symbol', '₱', 'Currency symbol to display'],
-      ['tax_rate', '0.12', 'Tax rate (12% = 0.12)'],
-      ['queue_enabled', 'true', 'Enable queue management system']
+      ['business_name', 'EscaShop', 'Business name displayed on receipts', 'business', 'string'],
+      ['business_address', '123 Main Street, City, Country', 'Business address for receipts', 'business', 'string'],
+      ['business_phone', '+1234567890', 'Business contact phone', 'business', 'string'],
+      ['receipt_footer', 'Thank you for your business!', 'Footer text on receipts', 'receipt', 'string'],
+      ['currency_symbol', '₱', 'Currency symbol to display', 'business', 'string'],
+      ['tax_rate', '0.12', 'Tax rate (12% = 0.12)', 'business', 'string'],
+      ['queue_enabled', 'true', 'Enable queue management system', 'features', 'boolean']
     ];
 
-    for (const [key, value, description] of defaultSettings) {
+    for (const [key, value, description, category, data_type] of defaultSettings) {
       await client.query(`
-        INSERT INTO system_settings (setting_key, setting_value, description)
-        VALUES ($1, $2, $3)
-        ON CONFLICT (setting_key) DO NOTHING
-      `, [key, value, description]);
+        INSERT INTO system_settings (key, value, description, category, data_type)
+        VALUES ($1, $2, $3, $4, $5)
+        ON CONFLICT (key) DO NOTHING
+      `, [key, value, description, category, data_type]);
     }
 
     console.log('✅ Default system settings configured');
