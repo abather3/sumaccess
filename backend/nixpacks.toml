@@ -4,8 +4,11 @@ setup = ["nodejs"]
 [variables]
 NODE_ENV = "production"
 
-[build]
-cmd = "npm install && npm run build"
+[phases.install]
+skip = true
+
+[phases.build]
+cmds = ["npm install", "npm run build"]
 
 [start]
 cmd = "npm start"
