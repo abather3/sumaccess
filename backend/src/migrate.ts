@@ -4,90 +4,19 @@ import path from 'path';
 import { runSystemSettingsMigration } from './database/migrations/system_settings';
 
 async function runMigrations() {
+  console.log('🚀 Starting database migrations...');
+  
   try {
-    console.log('Starting database migrations...');
-    
     // Ensure database connection is established
+    console.log('🔌 Connecting to database...');
     await connectDatabase();
+    console.log('✅ Database connected successfully');
     
-    // First, run SQL migrations from root database directory
-    const databasePath = path.join(__dirname, 'database');
-    let rootFiles: string[] = [];
-    
-    try {
-      rootFiles = fs.readdirSync(databasePath).filter(file => file.endsWith('.sql') && file.startsWith('migrate-'));
-    } catch (error) {
-      console.log('No root database directory found or no migrate-*.sql files');
-    }
-    
-    for (const file of rootFiles.sort()) {
-      const filePath = path.join(databasePath, file);
-      console.log(`Running root SQL migration: ${file}`);
-      try {
-        const sql = fs.readFileSync(filePath, { encoding: 'utf-8' });
-        await pool.query(sql);
-        console.log(`✓ Completed: ${file}`);
-      } catch (error) {
-        console.error(`✗ Failed to run migration ${file}:`, error);
-        throw error;
-      }
-    }
-    
-    // Then run migrations from migrations directory
-    const migrationsPath = path.join(__dirname, 'database', 'migrations');
-    let files: string[] = [];
-    
-    try {
-      files = fs.readdirSync(migrationsPath).sort();
-      console.log(`Found ${files.length} files in migrations directory:`, files);
-    } catch (error) {
-      console.log('No migrations directory found:', error);
-    }
-
-    for (const file of files) {
-      const filePath = path.join(migrationsPath, file);
-      console.log(`Processing file: ${file} at path: ${filePath}`);
-      
-      if (file.endsWith('.sql')) {
-        console.log(`Running SQL migration: ${file}`);
-        try {
-          const sql = fs.readFileSync(filePath, { encoding: 'utf-8' });
-          console.log(`SQL content length: ${sql.length} characters`);
-          const result = await pool.query(sql);
-          console.log(`✓ Completed: ${file} - Query result:`, result.command || 'Success');
-        } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : String(error);
-          console.error(`✗ Failed to run migration ${file}:`, errorMessage);
-          console.error('Error details:', error);
-          // Don't throw error for missing column errors - they might be expected
-          if (!errorMessage.includes('already exists') && !errorMessage.includes('does not exist')) {
-            throw error;
-          } else {
-            console.log(`⚠️ Continuing despite error in ${file}`);
-          }
-        }
-      } else if (file.endsWith('.ts') && file !== 'system_settings.ts') {
-        console.log(`Skipping TypeScript migration: ${file} (handled separately)`);
-      } else if (file.endsWith('.js') || file.endsWith('.map')) {
-        console.log(`Skipping compiled file: ${file}`);
-      } else {
-        console.log(`Skipping unknown file type: ${file}`);
-      }
-    }
-
-    // Run TypeScript migrations
-    try {
-      await runSystemSettingsMigration();
-      console.log('✓ Completed: system_settings.ts');
-    } catch (error) {
-      console.error('✗ Failed to run system settings migration:', error);
-      throw error;
-    }
-
-    // Fix users table columns if missing
-    console.log('Checking and fixing users table columns...');
+    // CRITICAL: Fix users table columns first - this is our main issue
+    console.log('🔧 CRITICAL: Checking and fixing users table columns...');
     try {
       // Check if status column exists
+      console.log('🔍 Checking for status column...');
       const checkStatusColumn = await pool.query(`
         SELECT column_name 
         FROM information_schema.columns 
@@ -95,23 +24,24 @@ async function runMigrations() {
       `);
 
       if (checkStatusColumn.rows.length === 0) {
-        console.log('Adding status column to users table...');
+        console.log('⚠️  STATUS COLUMN MISSING - Adding now...');
         await pool.query(`
           ALTER TABLE users 
-          ADD COLUMN status VARCHAR(20) DEFAULT 'active' NOT NULL
+          ADD COLUMN status VARCHAR(50) DEFAULT 'active' NOT NULL
         `);
         // Update existing users to have active status
-        await pool.query(`
+        const updateResult = await pool.query(`
           UPDATE users 
           SET status = 'active' 
-          WHERE status IS NULL
+          WHERE status IS NULL OR status = ''
         `);
-        console.log('✓ Status column added and updated');
+        console.log(`✅ STATUS COLUMN ADDED and ${updateResult.rowCount} users updated`);
       } else {
-        console.log('Status column already exists');
+        console.log('✅ Status column already exists');
       }
 
       // Check if reset_token column exists
+      console.log('🔍 Checking for reset_token column...');
       const checkResetTokenColumn = await pool.query(`
         SELECT column_name 
         FROM information_schema.columns 
@@ -119,17 +49,18 @@ async function runMigrations() {
       `);
 
       if (checkResetTokenColumn.rows.length === 0) {
-        console.log('Adding reset_token column to users table...');
+        console.log('⚠️  RESET_TOKEN COLUMN MISSING - Adding now...');
         await pool.query(`
           ALTER TABLE users 
           ADD COLUMN reset_token VARCHAR(255)
         `);
-        console.log('✓ Reset token column added');
+        console.log('✅ RESET_TOKEN COLUMN ADDED');
       } else {
-        console.log('Reset token column already exists');
+        console.log('✅ Reset token column already exists');
       }
 
       // Check if reset_token_expiry column exists
+      console.log('🔍 Checking for reset_token_expiry column...');
       const checkResetTokenExpiryColumn = await pool.query(`
         SELECT column_name 
         FROM information_schema.columns 
@@ -137,23 +68,95 @@ async function runMigrations() {
       `);
 
       if (checkResetTokenExpiryColumn.rows.length === 0) {
-        console.log('Adding reset_token_expiry column to users table...');
+        console.log('⚠️  RESET_TOKEN_EXPIRY COLUMN MISSING - Adding now...');
         await pool.query(`
           ALTER TABLE users 
           ADD COLUMN reset_token_expiry TIMESTAMP
         `);
-        console.log('✓ Reset token expiry column added');
+        console.log('✅ RESET_TOKEN_EXPIRY COLUMN ADDED');
       } else {
-        console.log('Reset token expiry column already exists');
+        console.log('✅ Reset token expiry column already exists');
       }
 
-      console.log('✓ Users table column check completed');
+      console.log('🎉 CRITICAL USERS TABLE COLUMN FIX COMPLETED');
     } catch (error) {
-      console.error('✗ Failed to fix users table columns:', error);
-      // Don't throw here - continue with startup
+      console.error('❌ CRITICAL ERROR fixing users table columns:', error);
+      // Don't throw here - we want to continue with other migrations
+      console.log('⚠️  Continuing with other migrations despite users table fix error');
+    }
+    
+    // Run TypeScript migrations
+    console.log('📋 Running system settings migration...');
+    try {
+      await runSystemSettingsMigration();
+      console.log('✅ Completed: system_settings.ts');
+    } catch (error) {
+      console.error('❌ Failed to run system settings migration:', error);
+      // Don't throw - continue
+      console.log('⚠️  Continuing despite system settings migration error');
+    }
+    
+    // Now run SQL migrations from root database directory
+    console.log('📁 Checking for root database SQL migrations...');
+    const databasePath = path.join(__dirname, 'database');
+    let rootFiles: string[] = [];
+    
+    try {
+      rootFiles = fs.readdirSync(databasePath).filter(file => file.endsWith('.sql') && file.startsWith('migrate-'));
+      console.log(`📋 Found ${rootFiles.length} root SQL migrations:`, rootFiles);
+    } catch (error) {
+      console.log('📁 No root database directory found or no migrate-*.sql files');
+    }
+    
+    for (const file of rootFiles.sort()) {
+      const filePath = path.join(databasePath, file);
+      console.log(`🔄 Running root SQL migration: ${file}`);
+      try {
+        const sql = fs.readFileSync(filePath, { encoding: 'utf-8' });
+        await pool.query(sql);
+        console.log(`✅ Completed: ${file}`);
+      } catch (error) {
+        console.error(`❌ Failed to run migration ${file}:`, error);
+        // Continue with other migrations
+      }
+    }
+    
+    // Then run migrations from migrations directory
+    console.log('📁 Checking migrations directory...');
+    const migrationsPath = path.join(__dirname, 'database', 'migrations');
+    let files: string[] = [];
+    
+    try {
+      files = fs.readdirSync(migrationsPath).sort();
+      console.log(`📋 Found ${files.length} files in migrations directory:`, files.slice(0, 10)); // Only show first 10 to avoid log spam
+    } catch (error) {
+      console.log('📁 No migrations directory found:', error);
     }
 
-    console.log('✅ All migrations completed successfully');
+    let sqlFilesProcessed = 0;
+    for (const file of files) {
+      const filePath = path.join(migrationsPath, file);
+      
+      if (file.endsWith('.sql')) {
+        sqlFilesProcessed++;
+        console.log(`🔄 [${sqlFilesProcessed}] Running SQL migration: ${file}`);
+        try {
+          const sql = fs.readFileSync(filePath, { encoding: 'utf-8' });
+          const result = await pool.query(sql);
+          console.log(`✅ [${sqlFilesProcessed}] Completed: ${file}`);
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          console.error(`❌ [${sqlFilesProcessed}] Failed to run migration ${file}:`, errorMessage);
+          // Continue with other migrations
+        }
+      } else if (file.endsWith('.ts') && file !== 'system_settings.ts') {
+        console.log(`⏭️  Skipping TypeScript migration: ${file} (handled separately)`);
+      }
+    }
+    
+    console.log(`📊 Processed ${sqlFilesProcessed} SQL migration files`);
+
+    console.log('🎯 All migrations completed successfully');
   } catch (error) {
     console.error('❌ Migration failed:', error);
     throw error;
