@@ -1,0 +1,14 @@
+[variables]
+NODE_ENV = "production"
+
+[phases.setup]
+nixpkgs = ["nodejs_22", "npm-9_x"]
+
+[phases.install]
+skip = true
+
+[phases.build]
+cmd = "node railway-install.js"
+
+[start]
+cmd = "npm start"
