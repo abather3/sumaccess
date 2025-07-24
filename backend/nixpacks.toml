@@ -1,0 +1,11 @@
+[providers]
+setup = ["nodejs"]
+
+[variables]
+NODE_ENV = "production"
+
+[build]
+cmd = "npm install && npm run build"
+
+[start]
+cmd = "npm start"
