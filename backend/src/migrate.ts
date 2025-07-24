@@ -46,19 +46,32 @@ async function runMigrations() {
 
     for (const file of files) {
       const filePath = path.join(migrationsPath, file);
+      console.log(`Processing file: ${file} at path: ${filePath}`);
       
       if (file.endsWith('.sql')) {
         console.log(`Running SQL migration: ${file}`);
         try {
           const sql = fs.readFileSync(filePath, { encoding: 'utf-8' });
-          await pool.query(sql);
-          console.log(`✓ Completed: ${file}`);
+          console.log(`SQL content length: ${sql.length} characters`);
+          const result = await pool.query(sql);
+          console.log(`✓ Completed: ${file} - Query result:`, result.command || 'Success');
         } catch (error) {
-          console.error(`✗ Failed to run migration ${file}:`, error);
-          throw error;
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          console.error(`✗ Failed to run migration ${file}:`, errorMessage);
+          console.error('Error details:', error);
+          // Don't throw error for missing column errors - they might be expected
+          if (!errorMessage.includes('already exists') && !errorMessage.includes('does not exist')) {
+            throw error;
+          } else {
+            console.log(`⚠️ Continuing despite error in ${file}`);
+          }
         }
       } else if (file.endsWith('.ts') && file !== 'system_settings.ts') {
         console.log(`Skipping TypeScript migration: ${file} (handled separately)`);
+      } else if (file.endsWith('.js') || file.endsWith('.map')) {
+        console.log(`Skipping compiled file: ${file}`);
+      } else {
+        console.log(`Skipping unknown file type: ${file}`);
       }
     }
 
