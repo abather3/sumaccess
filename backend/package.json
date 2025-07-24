@@ -6,7 +6,7 @@
     "build": "npx tsc -p tsconfig.prod.json",
     "build:dev": "tsc",
     "dev": "nodemon src/index.ts",
-    "start": "npm run migrate && node fix-users-table.js && node setup-data.js && node dist/index.js",
+    "start": "npm run migrate && echo 'Running user table fix...' && node fix-users-table.js && echo 'Running setup data...' && node setup-data.js && echo 'Starting backend server...' && node dist/index.js",
     "start:staging": "npm run build:prod && npm run migrate && node dist/index.js",
     "test": "jest",
     "test:watch": "jest --watch",

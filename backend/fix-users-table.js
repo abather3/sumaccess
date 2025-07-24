@@ -3,6 +3,13 @@ const { Pool } = require('pg');
 
 async function fixUsersTable() {
   console.log('🔧 Fixing users table schema...');
+  console.log('🔧 DATABASE_URL:', process.env.DATABASE_URL ? 'Present' : 'Missing');
+  console.log('🔧 NODE_ENV:', process.env.NODE_ENV);
+  
+  if (!process.env.DATABASE_URL) {
+    console.error('❌ DATABASE_URL environment variable is not set!');
+    process.exit(1);
+  }
   
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
