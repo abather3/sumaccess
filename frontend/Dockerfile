@@ -26,25 +26,23 @@ RUN echo "Contents of /app/public:" && ls -la public/ || echo "public directory 
 RUN mkdir -p public && \
     if [ ! -f public/index.html ]; then \
         echo "Creating missing public/index.html..." && \
-        cat > public/index.html << 'EOF'
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta name="description" content="ESC Shop - Your online shopping destination" />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <title>ESC Shop</title>
-</head>
-<body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-</body>
-</html>
-EOF
+        echo '<!DOCTYPE html>' > public/index.html && \
+        echo '<html lang="en">' >> public/index.html && \
+        echo '<head>' >> public/index.html && \
+        echo '    <meta charset="utf-8" />' >> public/index.html && \
+        echo '    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />' >> public/index.html && \
+        echo '    <meta name="viewport" content="width=device-width, initial-scale=1" />' >> public/index.html && \
+        echo '    <meta name="theme-color" content="#000000" />' >> public/index.html && \
+        echo '    <meta name="description" content="ESC Shop - Your online shopping destination" />' >> public/index.html && \
+        echo '    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />' >> public/index.html && \
+        echo '    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />' >> public/index.html && \
+        echo '    <title>ESC Shop</title>' >> public/index.html && \
+        echo '</head>' >> public/index.html && \
+        echo '<body>' >> public/index.html && \
+        echo '    <noscript>You need to enable JavaScript to run this app.</noscript>' >> public/index.html && \
+        echo '    <div id="root"></div>' >> public/index.html && \
+        echo '</body>' >> public/index.html && \
+        echo '</html>' >> public/index.html ; \
     else \
         echo "public/index.html already exists" ; \
     fi
@@ -52,23 +50,21 @@ EOF
 # Create other essential public files if missing
 RUN if [ ! -f public/manifest.json ]; then \
         echo "Creating manifest.json..." && \
-        cat > public/manifest.json << 'EOF'
-{
-  "short_name": "ESC Shop",
-  "name": "ESC Shop",
-  "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    }
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
-}
-EOF
+        echo '{' > public/manifest.json && \
+        echo '  "short_name": "ESC Shop",' >> public/manifest.json && \
+        echo '  "name": "ESC Shop",' >> public/manifest.json && \
+        echo '  "icons": [' >> public/manifest.json && \
+        echo '    {' >> public/manifest.json && \
+        echo '      "src": "favicon.ico",' >> public/manifest.json && \
+        echo '      "sizes": "64x64 32x32 24x24 16x16",' >> public/manifest.json && \
+        echo '      "type": "image/x-icon"' >> public/manifest.json && \
+        echo '    }' >> public/manifest.json && \
+        echo '  ],' >> public/manifest.json && \
+        echo '  "start_url": ".",' >> public/manifest.json && \
+        echo '  "display": "standalone",' >> public/manifest.json && \
+        echo '  "theme_color": "#000000",' >> public/manifest.json && \
+        echo '  "background_color": "#ffffff"' >> public/manifest.json && \
+        echo '}' >> public/manifest.json ; \
     fi
 
 # Verify public directory is now ready
