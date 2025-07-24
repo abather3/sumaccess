@@ -10,16 +10,22 @@ COPY frontend/package*.json ./
 # Install dependencies
 RUN npm install
 
-# Copy frontend source code explicitly
-COPY frontend/src ./src
-COPY frontend/public ./public
-COPY frontend/package.json ./package.json
-COPY frontend/package-lock.json ./package-lock.json 2>/dev/null || echo "No package-lock.json found"
+# Railway copies all files as flat structure, so we need to create public directory and index.html
+RUN mkdir -p public
 
-# Copy other frontend files
-COPY frontend/tsconfig.json ./tsconfig.json 2>/dev/null || echo "No tsconfig.json found"
-COPY frontend/tailwind.config.js ./tailwind.config.js 2>/dev/null || echo "No tailwind.config.js found"
-COPY frontend/postcss.config.js ./postcss.config.js 2>/dev/null || echo "No postcss.config.js found"
+# Create the index.html file that React needs
+RUN echo '<!DOCTYPE html>' > public/index.html && \
+    echo '<html lang="en">' >> public/index.html && \
+    echo '  <head>' >> public/index.html && \
+    echo '    <meta charset="utf-8" />' >> public/index.html && \
+    echo '    <meta name="viewport" content="width=device-width, initial-scale=1" />' >> public/index.html && \
+    echo '    <title>Esca Shop Premium Eyewear</title>' >> public/index.html && \
+    echo '  </head>' >> public/index.html && \
+    echo '  <body>' >> public/index.html && \
+    echo '    <noscript>You need to enable JavaScript to run this app.</noscript>' >> public/index.html && \
+    echo '    <div id="root"></div>' >> public/index.html && \
+    echo '  </body>' >> public/index.html && \
+    echo '</html>' >> public/index.html
 
 # Debug: Verify we have the required files
 RUN echo "=== DEBUGGING FILE STRUCTURE ===" && \
