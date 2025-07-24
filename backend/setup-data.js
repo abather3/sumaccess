@@ -43,21 +43,21 @@ async function setupBasicData() {
       if (settingsCount.rows[0].count === '0') {
         console.log('⚙️  Setting up default system settings...');
         const defaultSettings = [
-          ['business_name', 'EscaShop', 'Business name displayed on receipts', 'business', 'string'],
-          ['business_address', '123 Main Street, City, Country', 'Business address for receipts', 'business', 'string'],
-          ['business_phone', '+1234567890', 'Business contact phone', 'business', 'string'],
-          ['receipt_footer', 'Thank you for your business!', 'Footer text on receipts', 'receipt', 'string'],
-          ['currency_symbol', '₱', 'Currency symbol to display', 'business', 'string'],
-          ['tax_rate', '0.12', 'Tax rate (12% = 0.12)', 'business', 'string'],
-          ['queue_enabled', 'true', 'Enable queue management system', 'features', 'boolean']
+          ['business_name', 'EscaShop'],
+          ['business_address', '123 Main Street, City, Country'],
+          ['business_phone', '+1234567890'],
+          ['receipt_footer', 'Thank you for your business!'],
+          ['currency_symbol', '₱'],
+          ['tax_rate', '0.12'],
+          ['queue_enabled', 'true']
         ];
 
-        for (const [key, value, description, category, data_type] of defaultSettings) {
+        for (const [key, value] of defaultSettings) {
           await client.query(`
-            INSERT INTO system_settings (key, value, description, category, data_type)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO system_settings (key, value)
+            VALUES ($1, $2)
             ON CONFLICT (key) DO NOTHING
-          `, [key, value, description, category, data_type]);
+          `, [key, value]);
         }
 
         console.log('✅ Default system settings configured');
